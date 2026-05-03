@@ -1,0 +1,23 @@
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; src: url('../assets/fonts/inter-v20-latin-regular.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; src: url('../assets/fonts/inter-v20-latin-500.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; src: url('../assets/fonts/inter-v20-latin-600.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; src: url('../assets/fonts/jetbrains-mono-v24-latin-500.woff2') format('woff2'); }
+
+:root {
+    --bg-pure: #000000;
+    --surface-card: #18181A;
+    --surface-input: #121212;
+    
+    --text-main: #FFFFFF;
+    --text-muted: #E4E4E7;
+    --border: #27272A;
+    
+    --c-primary: #27AE60;   /* The vibrant green button */
+    --c-focus: #0ea5e9;     /* The blue focus ring */
+    --c-answered: #27AE60;
+    --c-skipped: #E63946;
+    --c-review: #8338EC;
+
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}

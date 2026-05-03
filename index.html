@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>pace.</title>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#000000">
+    <link rel="shortcut icon" href="./assets/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <!-- PWA & Mobile Optimization -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+    <!-- Failsafe Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            // Wait until the page fully loads so we don't block the UI rendering
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('SW Registered securely with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('SW Registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <div id="appContainer" class="app-container">
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: HOME PAGE                          -->
+        <!-- ========================================== -->
+        <main id="viewHome" class="view active">
+            <header class="home-header">
+                <h1>Pace. - Exam Preparation</h1>
+            </header>
+
+            <section class="card">
+                <h2 class="card-title">New Test Session</h2>
+                <div class="input-group">
+                    <label>Session Name</label>
+                    <input type="text" id="inpName" class="minimal-input" value="Mock Test 1" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>Total Time (minutes)</label>
+                    <input type="number" id="inpTime" class="minimal-input" value="60" inputmode="numeric">
+                </div>
+                <div class="input-group">
+                    <label>Total Questions</label>
+                    <input type="number" id="inpQs" class="minimal-input" value="100" inputmode="numeric">
+                </div>
+                <button id="btnStartSession" class="btn-primary">Start Session</button>
+            </section>
+
+            <section class="card">
+                <h2 class="card-title">Past Sessions</h2>
+                <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Click a session to grade it</p>
+                <div id="pastSessionsList" class="past-sessions-list">
+                    <!-- JS injects history here -->
+                </div>
+                <button id="btnViewAllSessions" class="btn-secondary hidden">View All Sessions</button>
+            </section>
+
+            <!-- NEW: Faded Footer -->
+            <footer class="home-footer">
+                <button id="btnOpenSync" class="btn-text-muted">Sync Data</button>
+                <span class="footer-dot">•</span>
+                <button id="btnOpenReset" class="btn-text-muted">Reset App</button>
+            </footer>
+
+            <!-- NEW: Sync Modal Overlay -->
+            <div id="modalSync" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h3>Sync Data</h3>
+                    <p>Export your data to keep it safe, or import a previous backup.</p>
+                    
+                    <!-- Added the "vertical" class and removed inline styles -->
+                    <div class="modal-actions vertical">
+                        <button id="btnExportData" class="btn-action-primary">Export Backup (.json)</button>
+                        
+                        <label for="inpImportData" class="btn-action" style="cursor: pointer;">Import Backup</label>
+                        <input type="file" id="inpImportData" accept=".json" class="hidden">
+                        
+                        <!-- Added a small spacer div for visual breathing room before Cancel -->
+                        <div style="height: 4px;"></div>
+                        
+                        <button id="btnSyncCancel" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Reset Modal Overlay -->
+            <div id="modalReset" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h3>Reset All Data?</h3>
+                    <p>This will permanently delete all past sessions and preferences. This cannot be undone.</p>
+                    <div class="modal-actions">
+                        <button id="btnResetCancel" class="btn-action">Cancel</button>
+                        <button id="btnResetConfirm" class="btn-action-danger">Yes, Delete</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: ACTIVE SESSION                     -->
+        <!-- ========================================== -->
+        <main id="viewSession" class="view hidden">
+            <header class="session-hud">
+                <div class="hud-single-row">
+                    <div class="focus-q-box">
+                        <span id="currentQ" class="focus-q">1</span>
+                    </div>
+                    <div id="globalTimer" class="time-box">00:00:00</div>
+                    <button id="btnSaveSession" class="btn-dark">Submit</button>
+                </div>
+            </header>
+
+            <section class="palette">
+                <div id="questionGrid" class="grid"></div>
+            </section>
+
+            <footer class="session-actions">
+                <div class="row">
+                    <button id="btnSkip" class="btn-action">Skip</button>
+                    <button id="btnReview" class="btn-action">Mark for review</button>
+                </div>
+                <div class="row">
+                    <button id="btnPrev" class="btn-nav-square" aria-label="Previous Question">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg> 
+                    </button>
+                    <button id="btnSaveNext" class="btn-action-primary">Save & Next</button>
+                </div>
+            </footer>
+
+            <!-- Safety Modal Overlay -->
+            <div id="modalSubmit" class="modal-overlay hidden">
+                <div class="modal-card">
+                    <h3>Submit Session?</h3>
+                    <p>Are you sure you want to end and save this test?</p>
+                    <div class="modal-actions">
+                        <button id="btnModalCancel" class="btn-action">Back to Session</button>
+                        <button id="btnModalConfirm" class="btn-action-primary">Yes, Submit</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: ALL PAST SESSIONS                  -->
+        <!-- ========================================== -->
+        <main id="viewAllSessions" class="view hidden">
+            <header class="sticky-header">
+                <h1>Full History</h1>
+                <button id="btnTopCloseHistory" class="btn-top-close" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+
+            <section class="card" style="margin-top: 10px;">
+                <div id="fullSessionsList" class="past-sessions-list">
+                    <!-- JS injects ALL history here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: SESSION ANALYTICS (GRADING)        -->
+        <!-- ========================================== -->
+        <main id="viewAnalytics" class="view hidden">
+            <header class="sticky-header">
+                <h1 id="analyticsTitle">Session Grading</h1>
+                <button id="btnTopCloseAnalytics" class="btn-top-close" aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </header>
+
+            <section class="card quick-scorer" style="margin-top: 10px;">
+                <div class="score-inputs-grid">
+                    <div class="input-group">
+                        <label>Marks/Q (+)</label>
+                        <input type="number" id="inpMarks" class="minimal-input" value="2" inputmode="decimal">
+                    </div>
+                    <div class="input-group">
+                        <label>Negative (-)</label>
+                        <input type="number" id="inpNegative" class="minimal-input" value="-0.5" inputmode="decimal">
+                    </div>
+                    <div class="input-group">
+                        <label>Correct (✔)</label>
+                        <input type="number" id="inpCorrect" class="minimal-input" placeholder="0" inputmode="numeric">
+                    </div>
+                    <div class="input-group">
+                        <label>Wrong (✘)</label>
+                        <input type="number" id="inpWrong" class="minimal-input" placeholder="0" inputmode="numeric">
+                    </div>
+                </div>
+                
+                <div class="auto-stats-grid">
+                    <div class="stat-mini">
+                        <span class="stat-mini-label">Skipped</span>
+                        <span id="statSkippedCalc" class="stat-mini-val">0</span>
+                    </div>
+                    <div class="stat-mini">
+                        <span class="stat-mini-label">Accuracy</span>
+                        <span id="statAccuracy" class="stat-mini-val">0%</span>
+                    </div>
+                </div>
+
+                <div class="score-result">
+                    <span>Final Score:</span>
+                    <span id="displayScore" class="score-highlight">0.00</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2 class="card-title">Performance Breakdown</h2>
+                <div class="summary-stat-row">
+                    <span>Total Time: <strong id="statTotalTime">00:00</strong></span>
+                    <span>Attempted: <strong id="statAttempted">0/0</strong></span>
+                </div>
+                <div class="summary-stat-row" style="border-bottom: none; padding-top: 8px;">
+                    <span>Avg Speed: <strong id="statAvgSpeed">0s/Q</strong></span>
+                </div>
+                
+                <div class="breakdown-header" style="margin-top: 16px;">
+                    <span>Q.No</span>
+                    <span>Status</span>
+                    <span>Time</span>
+                </div>
+                <div id="analyticsList" class="analytics-list"></div>
+            </section>
+        </main>
+
+    </div>
+    <script type="module" src="js/app.js?v=16"></script>
+</body>
+</html>

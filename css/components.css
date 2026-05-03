@@ -1,0 +1,217 @@
+/* --- HOME HEADER --- */
+.home-header { text-align: center; padding: 20px 0 30px 0; }
+.home-header h1 { font-size: 1.1rem; font-weight: 500; letter-spacing: 0.5px; color: var(--text-main); }
+
+/* --- CARDS --- */
+.card { background-color: var(--surface-card); border-radius: 12px; padding: 24px 15px; margin: 0 auto 20px auto; width: 100%; max-width: 800px; }
+.card-title { font-size: 1.1rem; font-weight: 500; text-align: center; margin-bottom: 20px; }
+
+/* --- INPUT GROUPS --- */
+.input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.input-group label { font-size: 0.9rem; color: var(--text-main); }
+.minimal-input { 
+    width: 100%; /* <-- THIS IS THE FIX */
+    background-color: var(--surface-input); 
+    border: 1px solid var(--border); 
+    border-radius: 8px; 
+    padding: 14px 16px; 
+    font-size: 1rem; 
+    color: var(--text-main); 
+    transition: border-color 0.2s ease; 
+}
+.minimal-input:focus { border-color: var(--c-focus); }
+
+/* --- BUTTONS --- */
+.btn-primary { width: 100%; height: 52px; background-color: var(--c-primary); color: #000000; font-size: 1rem; font-weight: 600; border-radius: 8px; margin-top: 12px; transition: opacity 0.2s ease; }
+/* --- SECONDARY BUTTON --- */
+.btn-secondary { 
+    width: 100%; 
+    height: 48px; 
+    background-color: var(--surface-input); 
+    color: var(--text-main); 
+    font-size: 0.95rem; 
+    font-weight: 500; 
+    border: 1px solid var(--border); 
+    border-radius: 8px; 
+    margin-top: 16px; 
+    transition: background-color 0.2s ease; 
+}
+.btn-secondary:active { 
+    background-color: var(--border); 
+}
+.btn-primary:active { opacity: 0.8; }
+
+/* --- PAST SESSIONS --- */
+.past-sessions-list { display: flex; flex-direction: column; gap: 12px; }
+.session-item { background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: border-color 0.2s; }
+.session-item:active { border-color: var(--c-focus); }
+.session-item-left { display: flex; flex-direction: column; gap: 4px; }
+.session-item-title { color: var(--text-main); font-weight: 500; }
+.session-item-date { font-size: 0.8rem; color: var(--text-muted); }
+.session-item-score { font-size: 1.1rem; font-weight: 600; color: var(--c-primary); font-family: var(--font-mono); }
+
+/* --- ACTIVE SESSION HUD --- */
+.session-hud { width: 100%; max-width: 800px; margin: 0 auto; padding: 0 0 16px 0; }
+.hud-single-row { display: flex; gap: 8px; height: 52px; }
+.focus-q-box { flex: 0 0 60px; background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.focus-q { font-size: 1.4rem; font-weight: 600; color: var(--c-focus); }
+.time-box { flex: 1; background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-family: var(--font-mono); letter-spacing: 1px; }
+.btn-dark { flex: 0 0 70px; background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; color: var(--text-muted); transition: opacity 0.2s; }
+.btn-dark:active { opacity: 0.8; }
+
+/* --- SESSION GRID --- */
+.palette { width: 100%; flex: 1; overflow-y: auto; padding: 20px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(55px, 1fr)); gap: 10px; justify-content: center; width: 100%; }
+.q-pill { aspect-ratio: 1; background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; font-size: 1.1rem; color: var(--text-muted); transition: all 0.1s ease; }
+.q-pill.active { border: 2px solid var(--c-focus); color: var(--text-main); }
+.q-pill.answered { background-color: var(--c-answered); border-color: var(--c-answered); color: #000; font-weight: 600;}
+.q-pill.skipped { background-color: var(--c-skipped); border-color: var(--c-skipped); color: #fff; }
+.q-pill.review { background-color: var(--c-review); border-color: var(--c-review); color: #fff; }
+
+/* --- SESSION ACTIONS --- */
+.session-actions { width: 100%; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; padding-top: 10px; }
+.row { display: flex; gap: 8px; }
+.btn-action { flex: 1; height: 44px; background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; color: var(--text-muted); transition: opacity 0.2s; }
+.btn-nav-square { flex: 0 0 52px; height: 52px; background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: opacity 0.2s; }
+.btn-action-primary { flex: 1; height: 52px; background-color: var(--c-primary); color: #000; font-weight: 600; border-radius: 8px; font-size: 1.05rem; transition: opacity 0.2s; }
+.btn-action:active, .btn-nav-square:active, .btn-action-primary:active { opacity: 0.7; }
+
+/* --- MODAL OVERLAY --- */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+.modal-overlay.hidden { display: none !important; }
+.modal-card { background-color: var(--surface-card); width: 100%; max-width: 350px; border-radius: 12px; padding: 24px; border: 1px solid var(--border); text-align: center; }
+.modal-card h3 { margin-bottom: 8px; font-weight: 500; font-size: 1.2rem; color: var(--text-main); }
+.modal-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; }
+.modal-actions { 
+    display: flex; 
+    gap: 12px; 
+}
+/* Force both buttons in the modal to be the exact same height */
+.modal-actions .btn-action,
+.modal-actions .btn-action-primary {
+    height: 48px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- ANALYTICS UPGRADES --- */
+.quick-scorer { margin-bottom: 20px; }
+.score-inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.score-inputs-grid .input-group { margin-bottom: 0; }
+
+.auto-stats-grid { display: flex; gap: 12px; margin-bottom: 16px; }
+.stat-mini { flex: 1; background-color: var(--surface-input); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 4px; }
+.stat-mini-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-mini-val { font-size: 1.2rem; font-weight: 600; color: var(--text-main); }
+
+.score-result { display: flex; justify-content: space-between; align-items: center; padding: 16px; background-color: var(--surface-input); border-radius: 8px; font-size: 1.1rem; font-weight: 500; border: 1px solid var(--border); }
+.score-highlight { font-size: 1.6rem; color: var(--c-primary); font-family: var(--font-mono); font-weight: 600; }
+
+.summary-stat-row { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.95rem; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.summary-stat-row strong { color: var(--text-main); }
+.breakdown-header { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.85rem; padding: 0 10px 8px 10px; border-bottom: 1px solid var(--border); }
+.analytics-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.stat-row { display: flex; justify-content: space-between; align-items: center; background-color: var(--surface-input); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); }
+/* --- STICKY HEADERS --- */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-pure); /* Hides the text scrolling underneath */
+    z-index: 50; /* Keeps it on top of the cards */
+    padding: 20px 0;
+    margin-bottom: 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border); /* A faint line to separate from the scroll */
+}
+
+.sticky-header h1 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+}
+
+.btn-top-close {
+    position: absolute;
+    right: 0px; /* Snaps to the right edge */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    background-color: var(--surface-input);
+    border: 1px solid var(--border);
+    border-radius: 50%; /* Perfect circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.btn-top-close:active {
+    background-color: var(--border);
+    color: var(--text-main);
+}
+
+/* --- HOME FOOTER --- */
+.home-footer { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 16px; 
+    padding: 20px 0 40px 0; 
+}
+.btn-text-muted { 
+    font-size: 0.85rem; 
+    color: var(--text-muted); 
+    opacity: 0.5; 
+    transition: opacity 0.2s; 
+}
+.btn-text-muted:active { 
+    opacity: 1; 
+}
+.footer-dot { 
+    font-size: 0.85rem; 
+    color: var(--text-muted); 
+    opacity: 0.3; 
+}
+
+/* --- DANGER BUTTON (For Reset) --- */
+.btn-action-danger { 
+    flex: 1; 
+    height: 48px; 
+    background-color: var(--c-skipped); /* Uses your existing red color */
+    color: #fff; 
+    font-weight: 600; 
+    border-radius: 8px; 
+    font-size: 1.05rem; 
+    transition: opacity 0.2s; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-action-danger:active { 
+    opacity: 0.7; 
+}
+
+/* --- MODAL BUTTON STANDARDIZATION --- */
+.modal-actions.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* A slightly larger gap makes mobile tapping easier */
+}
+
+.modal-actions.vertical .btn-action,
+.modal-actions.vertical .btn-action-primary,
+.modal-actions.vertical .btn-secondary,
+.modal-actions.vertical .btn-action-danger {
+    flex: none; /* <-- THIS IS THE MAGIC FIX. Stops the vertical squishing! */
+    width: 100%;
+    min-height: 52px; /* Forces all buttons to be large and uniform */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
