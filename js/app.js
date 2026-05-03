@@ -5,6 +5,7 @@ import { UI } from './ui.js';
 const App = {
     timerFrame: null,
     viewingSessionId: null, 
+    wakeLock: null, // NEW: Holds the screen awake state
 
     ui: {
         // Sticky Header Close Buttons
@@ -70,9 +71,26 @@ const App = {
         displayScore: document.getElementById('displayScore')
     },
 
+    // --- NEW: ALWAYS-ON WAKE LOCK SYSTEM ---
+    async requestWakeLock() {
+        // Feature detection prevents crashes on older, unsupported browsers
+        if ('wakeLock' in navigator) {
+            try {
+                this.wakeLock = await navigator.wakeLock.request('screen');
+                console.log('Screen Wake Lock active.');
+            } catch (err) {
+                // If denied (e.g., Low Power Mode), it just logs and continues normally
+                console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+            }
+        }
+    },
+
     init() {
         this.bindEvents();
         this.loadFormState();
+        
+        // Keep screen awake the moment the app opens
+        this.requestWakeLock();
         
         const sessionStatus = State.loadActiveSession();
         
@@ -81,7 +99,6 @@ const App = {
             UI.renderGrid((id) => this.jump(id));
             this.startTimerLoop();
         } else if (sessionStatus === 'expired') {
-            // NEW: Automatically save tests that ran out of time in the background
             this.recoverAndSubmitExpiredSession();
         } else {
             this.renderPastSessions();
@@ -192,20 +209,26 @@ const App = {
             this.submitSession();
         });
 
-        // --- NEW: SYNC DATA EVENTS ---
         this.ui.btnOpenSync.addEventListener('click', () => this.ui.modalSync.classList.remove('hidden'));
         this.ui.btnSyncCancel.addEventListener('click', () => this.ui.modalSync.classList.add('hidden'));
         
         this.ui.btnExportData.addEventListener('click', () => this.exportData());
         this.ui.inpImportData.addEventListener('change', (e) => this.importData(e));
 
-        // --- NEW: RESET APP EVENTS ---
         this.ui.btnOpenReset.addEventListener('click', () => this.ui.modalReset.classList.remove('hidden'));
         this.ui.btnResetCancel.addEventListener('click', () => this.ui.modalReset.classList.add('hidden'));
         this.ui.btnResetConfirm.addEventListener('click', () => this.resetApp());
+
+        // --- NEW: RE-ENGAGE WAKE LOCK ON RETURN ---
+        document.addEventListener('visibilitychange', async () => {
+            // Unconditionally keep the screen on if the app becomes visible again
+            if (document.visibilityState === 'visible') {
+                await this.requestWakeLock();
+            }
+        });
     },
 
-    // --- NEW: DATA MANAGEMENT LOGIC ---
+    // --- DATA MANAGEMENT LOGIC ---
     exportData() {
         const data = {
             past_sessions: Storage.get('past_sessions'),
@@ -328,7 +351,6 @@ const App = {
         State.commitTimeForCurrentQuestion();
         State.clearActiveSession();
 
-        // --- NEW: SMART DISCARD LOGIC ---
         // Calculate total time spent (using a fallback to 0 just in case)
         const totalTimeSpentMs = State.qs.reduce((acc, q) => acc + (q.time || 0), 0);
         
@@ -342,7 +364,6 @@ const App = {
             this.switchView('home');
             return; // 🛑 EXIT EARLY: Do not execute the save logic below
         }
-        // --------------------------------
 
         // 2. If it passes the filter, build the record and save it
         const sessionRecord = {
