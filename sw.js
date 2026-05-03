@@ -1,5 +1,5 @@
 // Version updated to v2 to force the browser to replace the old Service Worker
-const CACHE_NAME = 'pace-cache-v2';
+const CACHE_NAME = 'pace-cache-v1.0.0';
 
 // The absolute essential files needed to boot the app offline
 const PRECACHE_ASSETS = [
